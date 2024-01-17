@@ -1,6 +1,7 @@
 import streamlit as st
-from langchain import PromptTemplate
-from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
+# from langchain.llms import OpenAI
+from langchain_openai import OpenAI
 
 template = """
     Below is an email that may be poorly worded.
@@ -39,7 +40,8 @@ prompt = PromptTemplate(
 def load_LLM(openai_api_key):
     """Logic for loading the chain you want to use should go here."""
     # Make sure your openai_api_key is set as an environment variable
-    llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
+    # llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
+    llm = OpenAI(temperature=.7)
     return llm
 
 st.set_page_config(page_title="Globalize Email", page_icon=":robot:")
@@ -54,7 +56,7 @@ with col1:
                 [@GregKamradt](https://twitter.com/GregKamradt). \n\n View Source Code on [Github](https://github.com/gkamradt/globalize-text-streamlit/blob/main/main.py)")
 
 with col2:
-    st.image(image='TweetScreenshot.png', width=500, caption='https://twitter.com/DannyRichman/status/1598254671591723008')
+    st.image(image='TweetScreenshot.png', width=500, caption='https://twitter.com/zgpeace')
 
 st.markdown("## Enter Your Email To Convert")
 
@@ -94,14 +96,14 @@ st.button("*See An Example*", type='secondary', help="Click to see an example of
 st.markdown("### Your Converted Email:")
 
 if email_input:
-    if not openai_api_key:
-        st.warning('Please insert OpenAI API Key. Instructions [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)', icon="⚠️")
-        st.stop()
+    # if not openai_api_key:
+    #     st.warning('Please insert OpenAI API Key. Instructions [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)', icon="⚠️")
+    #     st.stop()
 
     llm = load_LLM(openai_api_key=openai_api_key)
 
     prompt_with_email = prompt.format(tone=option_tone, dialect=option_dialect, email=email_input)
 
-    formatted_email = llm(prompt_with_email)
+    formatted_email = llm.invoke(prompt_with_email)
 
     st.write(formatted_email)
